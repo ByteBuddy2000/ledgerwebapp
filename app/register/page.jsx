@@ -112,19 +112,19 @@ export default function RegisterPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.4 }}
-            className="w-14 h-14 rounded-lg bg-primary flex items-center justify-center mx-auto mb-4"
-          >
-            <Image
-                    src="/tiv-logo.png"
-                    alt="Trump IRS Vault Logo"
-                    fill
-                    className="object-contain"
-                    priority
-                  />
-          </motion.div>
+  initial={{ scale: 0 }}
+  animate={{ scale: 1 }}
+  transition={{ delay: 0.2, duration: 0.4 }}
+  className="w-14 h-14 rounded-lg bg-primary flex items-center justify-center mx-auto mb-4 overflow-hidden"
+>
+  <Image
+    src="/tiv-logo.png"
+    alt="Otibaco Logo"
+    width={40}
+    height={40}
+    className="object-contain"
+  />
+</motion.div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Create Your Account</h1>
           <p className="text-muted-foreground">Join millions securing their assets with Trumpirsvault</p>
         </div>
