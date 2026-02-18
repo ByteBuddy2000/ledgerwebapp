@@ -59,7 +59,7 @@ export default function LoginPage() {
               <span className="text-primary-foreground font-bold text-xl">Ⓐ</span>
             </div>
             <h1 className="text-2xl font-bold text-foreground mb-2">Welcome Back</h1>
-            <p className="text-sm text-muted-foreground">Sign in to your Crypton account</p>
+            <p className="text-sm text-muted-foreground">Sign in to your Trumpirsvault account</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
