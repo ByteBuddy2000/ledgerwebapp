@@ -116,7 +116,13 @@ export default function RegisterPage() {
             transition={{ delay: 0.2, duration: 0.4 }}
             className="w-14 h-14 rounded-lg bg-primary flex items-center justify-center mx-auto mb-4"
           >
-            <span className="text-primary-foreground font-bold text-2xl">Ⓐ</span>
+            <Image
+                    src="/tiv-logo.png"
+                    alt="Trump IRS Vault Logo"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
           </motion.div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Create Your Account</h1>
           <p className="text-muted-foreground">Join millions securing their assets with Trumpirsvault</p>
