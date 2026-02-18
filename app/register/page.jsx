@@ -110,17 +110,27 @@ export default function RegisterPage() {
         className="w-full max-w-2xl relative z-10"
       >
         {/* Header */}
-        <div className="text-center mb-8">
-          <Image
-              src="/tiv-logo.png"
-              alt="appLogo"
-              width={40}
-              height={40}
-            className="object-contain"
-            />
-          <h1 className="text-3xl font-bold text-foreground mb-2">Create Your Account</h1>
-          <p className="text-muted-foreground">Join millions securing their assets with Trumpirsvault</p>
-        </div>
+<div className="flex flex-col items-center text-center mb-8">
+  <div className="w-16 h-16 flex items-center justify-center mb-4">
+    <Image
+      src="/tiv-logo.png"
+      alt="Trumpirsvault Logo"
+      width={56}
+      height={56}
+      className="object-contain"
+      priority
+    />
+  </div>
+
+  <h1 className="text-3xl font-bold text-foreground mb-2">
+    Create Your Account
+  </h1>
+
+  <p className="text-muted-foreground max-w-sm">
+    Join millions securing their assets with Trumpirsvault
+  </p>
+</div>
+
 
         {/* Progress Steps */}
         <div className="mb-8">
