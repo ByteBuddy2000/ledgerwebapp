@@ -56,15 +56,13 @@ export default function LoginPage() {
         <div className="bg-card border border-primary/20 rounded-2xl p-8 backdrop-blur-sm">
           {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center mx-auto mb-4">
               <Image
-    src="/tiv-logo.png"
-    alt="Otibaco Logo"
-    width={40}
-    height={40}
-    className="object-contain"
+                  src="/tiv-logo.png"
+                  alt="appLogo"
+                  width={40}
+                  height={40}
+                  className="object-contain"
   />
-            </div>
             <h1 className="text-2xl font-bold text-foreground mb-2">Welcome Back</h1>
             <p className="text-sm text-muted-foreground">Sign in to your Trumpirsvault account</p>
           </div>
