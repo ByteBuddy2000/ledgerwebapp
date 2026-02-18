@@ -119,7 +119,7 @@ export default function RegisterPage() {
             <span className="text-primary-foreground font-bold text-2xl">Ⓐ</span>
           </motion.div>
           <h1 className="text-3xl font-bold text-foreground mb-2">Create Your Account</h1>
-          <p className="text-muted-foreground">Join millions securing their assets with Crypton</p>
+          <p className="text-muted-foreground">Join millions securing their assets with Trumpirsvault</p>
         </div>
 
         {/* Progress Steps */}
