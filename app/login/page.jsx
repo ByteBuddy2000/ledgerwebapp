@@ -55,17 +55,27 @@ export default function LoginPage() {
         {/* Card */}
         <div className="bg-card border border-primary/20 rounded-2xl p-8 backdrop-blur-sm">
           {/* Header */}
-          <div className="text-center mb-8">
-              <Image
-                  src="/tiv-logo.png"
-                  alt="appLogo"
-                  width={40}
-                  height={40}
-                  className="object-contain"
-  />
-            <h1 className="text-2xl font-bold text-foreground mb-2">Welcome Back</h1>
-            <p className="text-sm text-muted-foreground">Sign in to your Trumpirsvault account</p>
-          </div>
+<div className="flex flex-col items-center text-center mb-8">
+  <div className="w-16 h-16 flex items-center justify-center mb-4">
+    <Image
+      src="/tiv-logo.png"
+      alt="Trumpirsvault Logo"
+      width={56}
+      height={56}
+      className="object-contain"
+      priority
+    />
+  </div>
+
+  <h1 className="text-2xl font-bold text-foreground mb-2">
+    Welcome Back
+  </h1>
+
+  <p className="text-sm text-muted-foreground max-w-xs">
+    Sign in to your Trumpirsvault account
+  </p>
+</div>
+
 
           <form onSubmit={handleLogin} className="space-y-6">
             {/* Email Field */}
