@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { toast } from 'sonner'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import {
   Shield,
   User,
