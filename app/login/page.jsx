@@ -7,6 +7,7 @@ import Link from 'next/link'
 import { toast } from 'sonner'
 import { Eye, EyeOff, ArrowRight } from 'lucide-react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 
 export default function LoginPage() {
   const router = useRouter()
