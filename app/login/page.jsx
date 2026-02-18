@@ -56,7 +56,13 @@ export default function LoginPage() {
           {/* Header */}
           <div className="text-center mb-8">
             <div className="w-12 h-12 rounded-lg bg-primary flex items-center justify-center mx-auto mb-4">
-              <span className="text-primary-foreground font-bold text-xl">Ⓐ</span>
+              <Image
+                    src="/tiv-logo.png"
+                    alt="Trump IRS Vault Logo"
+                    fill
+                    className="object-contain"
+                    priority
+                  />
             </div>
             <h1 className="text-2xl font-bold text-foreground mb-2">Welcome Back</h1>
             <p className="text-sm text-muted-foreground">Sign in to your Trumpirsvault account</p>
