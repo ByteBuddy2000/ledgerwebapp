@@ -50,6 +50,7 @@ export async function POST(req) {
       state: state || "",
       zipCode: zipCode || "",
       accountType,
+      role: "user", // Explicitly set role on registration
       joinDate: new Date(),
     });
 

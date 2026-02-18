@@ -17,7 +17,8 @@ export async function middleware(req) {
     return NextResponse.next();
   }
 
-  const userRole = token.role;
+  // Default role to 'user' if not set
+  const userRole = token.role || "user";
 
   // Role-based route protection
   if (pathname.startsWith("/admin") && userRole !== "admin") {
