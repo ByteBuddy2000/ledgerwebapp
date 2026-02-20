@@ -120,7 +120,7 @@ export function FooterSection() {
               </li>
               <li>
                 <span className="block font-medium text-foreground mb-1">Certification:</span>
-                <Link href="#" className="hover:text-primary transition">
+                <Link href="/certification" className="hover:text-primary transition">
                   View Certification Validity
                 </Link>
               </li>
