@@ -9,7 +9,7 @@ export default function MobileAppPage() {
 
   const handleDownload = () => {
     const downloadUrl =
-      "https://drive.google.com/file/d/1kxqTgxtb_F11MlhwjjqlUQprQyejTv6-/view?usp=drivesdk";
+      "https://drive.google.com/file/d/1nAtgsQ1la-n66_2R6bAVW1o_8-_Nn6mK/view?usp=drivesdk";
     window.open(downloadUrl, "_blank");
   };
 
