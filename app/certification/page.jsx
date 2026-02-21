@@ -11,7 +11,7 @@ export default function CertificationPage() {
       </p>
       <div className="border rounded-lg shadow-lg bg-white p-4">
         <Image
-          src="/certification.png"
+          src="/trumpcertification.jpeg"
           alt=" Certification"
           width={400}
           height={400}
