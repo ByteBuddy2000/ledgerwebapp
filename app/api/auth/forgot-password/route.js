@@ -41,7 +41,7 @@ function getResetEmailHTML(resetLink, userName) {
             <p>Best regards,<br>The Support Team</p>
           </div>
           <div class="footer">
-            <p>© 2024 All rights reserved. This is an automated email, please do not reply.</p>
+            <p>© 2026 All rights reserved. This is an automated email, please do not reply.</p>
           </div>
         </div>
       </body>
