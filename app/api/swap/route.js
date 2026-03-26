@@ -25,7 +25,7 @@ export async function POST(req) {
   if (!session?.user?.email) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
   const { swapFrom, swapFromNetwork, swapTo, swapToNetwork, amount } = await req.json();
-  if (!swapFrom || !swapFromNetwork || !swapTo || !swapToNetwork || !amount) {
+  if (!swapFrom || !swapFromNetwork || !swapTo || !swapToNetwork || amount == null || Number(amount) <= 0) {
     return Response.json({ error: "Invalid data" }, { status: 400 });
   }
 
@@ -35,7 +35,7 @@ export async function POST(req) {
 
   // Get user's asset (by coin and network)
   const fromAsset = await UserAsset.findOne({
-    userId: user._id,
+    user: user._id,
     coin: swapFrom.toUpperCase(),
     network: swapFromNetwork,
   });
@@ -66,13 +66,13 @@ export async function POST(req) {
   await fromAsset.save();
 
   let toAsset = await UserAsset.findOne({
-    userId: user._id,
+    user: user._id,
     coin: swapTo.toUpperCase(),
     network: swapToNetwork,
   });
   if (!toAsset) {
     toAsset = new UserAsset({
-      userId: user._id,
+      user: user._id,
       coin: swapTo.toUpperCase(),
       network: swapToNetwork,
       amount: 0,
@@ -90,6 +90,7 @@ export async function POST(req) {
     toCoin: swapTo.toUpperCase(),
     fromNetwork: swapFromNetwork,
     toNetwork: swapToNetwork,
+    toAmount: toAmount,
     timestamp: new Date(),
   });
 
