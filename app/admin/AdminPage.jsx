@@ -103,6 +103,7 @@ export default function AdminDashboard({ recentCustomers = [] }) {
 
   // For notification badge
   const [pendingWithdrawalCount, setPendingWithdrawalCount] = useState(0);
+  const [processingWithdrawalId, setProcessingWithdrawalId] = useState(null);
 
   // Ref for scrolling to section
   const withdrawalSectionRef = useRef(null);
