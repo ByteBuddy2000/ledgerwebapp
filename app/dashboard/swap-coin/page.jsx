@@ -22,9 +22,9 @@ import { toast, Toaster } from "sonner";
 
 // Coins and their supported networks
 const coins = [
-  { value: "btc", label: "Bitcoin", networks: ["Bitcoin"] },
-  { value: "eth", label: "Ethereum", networks: ["Ethereum"] },
-  { value: "usdt", label: "USDT", networks: ["Ethereum (ERC20)", "Tron (TRC20)", "Tron (BEP20)"] },
+  { value: "btc", label: "Bitcoin", networks: ["Mainnet"] },
+  { value: "eth", label: "Ethereum", networks: ["Mainnet"] },
+  { value: "usdt", label: "USDT", networks: ["ERC20", "TRC20", "BEP20"] },
   { value: "bnb", label: "BNB", networks: ["BNB Smart Chain (BEP20)"] },
   { value: "sol", label: "Solana", networks: ["Solana"] },
   { value: "ada", label: "Cardano", networks: ["Cardano"] },
