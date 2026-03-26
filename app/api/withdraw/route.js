@@ -2,21 +2,34 @@ import { NextResponse } from "next/server";
 import { connectToDB } from "@/lib/connectDB";
 import Withdraw from "@/models/Withdrawal";
 import Transaction from "@/models/Transaction";
-import UserAsset from "@/models/UserAsset"; // <-- Import UserAsset
+import UserAsset from "@/models/UserAsset";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/auth";
 
 export async function POST(req) {
   try {
     await connectToDB();
 
-    const body = await req.json();
-    const { userId, coin, network, amount, walletAddress } = body;
+    const session = await getServerSession(authOptions);
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
-    if (!userId || !coin || !network || !amount || !walletAddress) {
+    const body = await req.json();
+    const { coin, network, amount, walletAddress } = body;
+
+    if (!coin || !network || !amount || !walletAddress) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
+    const User = (await import("@/models/User")).default;
+    const user = await User.findOne({ email: session.user.email });
+    if (!user) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
     // 1. Find the user's asset
-    const userAsset = await UserAsset.findOne({ user: userId, coin, network });
+    const userAsset = await UserAsset.findOne({ user: user._id, coin, network });
     if (!userAsset) {
       return NextResponse.json({ error: "Asset not found" }, { status: 404 });
     }
@@ -32,7 +45,7 @@ export async function POST(req) {
 
     // 4. Proceed with withdrawal and transaction creation
     const newWithdrawal = new Withdraw({
-      user: userId,
+      user: user._id,
       coin,
       network,
       amount,
@@ -43,7 +56,7 @@ export async function POST(req) {
     await newWithdrawal.save();
 
     const newTransaction = new Transaction({
-      userId,
+      userId: user._id,
       type: "withdrawal",
       amount,
       coin,
