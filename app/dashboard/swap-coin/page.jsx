@@ -112,6 +112,26 @@ export default function Page() {
     fetchEquivalentAmount(amount, swapFrom, val);
   };
 
+  const handleReverseSwap = () => {
+    if (!swapFrom || !swapTo) return;
+
+    const newFrom = swapTo;
+    const newFromNetwork = swapToNetwork;
+    const newTo = swapFrom;
+    const newToNetwork = swapFromNetwork;
+
+    setSwapFrom(newFrom);
+    setSwapFromNetwork(newFromNetwork);
+    setSwapTo(newTo);
+    setSwapToNetwork(newToNetwork);
+
+    if (amount) {
+      fetchEquivalentAmount(amount, newFrom, newTo);
+    } else {
+      setEquivalent("");
+    }
+  };
+
   async function handleSwap(e) {
     e.preventDefault();
     setLoading(true);
@@ -206,9 +226,14 @@ export default function Page() {
                   </div>
 
                   <div className="flex items-center justify-center py-2">
-                    <div className="p-2 bg-primary text-primary-foreground rounded-full shadow-lg shadow-primary/25">
+                    <button
+                      type="button"
+                      onClick={handleReverseSwap}
+                      className="p-2 bg-primary text-primary-foreground rounded-full shadow-lg shadow-primary/25 hover:opacity-90 transition"
+                      aria-label="Swap direction"
+                    >
                       <ArrowLeftRight className="w-5 h-5" />
-                    </div>
+                    </button>
                   </div>
 
                   <div className="flex-1">
