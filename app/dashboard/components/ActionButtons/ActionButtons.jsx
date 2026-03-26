@@ -280,7 +280,7 @@ function WithdrawalModal({ userId, onClose }) {
   useEffect(() => {
     const fetchAssets = async () => {
       try {
-        const res = await fetch(`/api/assets`);
+        const res = await fetch(`/api/user-assets`);
         const data = await res.json();
         console.log("Fetched assets:", data.assets); // Add this line
         if (res.ok) setAssets(data.assets || []);
@@ -319,7 +319,6 @@ function WithdrawalModal({ userId, onClose }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          userId,
           coin,
           network,
           amount: parseFloat(amount),
