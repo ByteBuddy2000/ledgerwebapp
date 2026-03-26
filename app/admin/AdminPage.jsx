@@ -128,24 +128,42 @@ export default function AdminDashboard({ recentCustomers = [] }) {
     withdrawalSectionRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Approve handler
-  const [processingWithdrawalId, setProcessingWithdrawalId] = useState(null);
-
   const handleApprove = async (withdrawalId) => {
     setProcessingWithdrawalId(withdrawalId);
-    await fetch(`/api/admin/withdrawals/${withdrawalId}/approve`, { method: "POST" });
-    setPendingWithdrawals((prev) => prev.filter(w => w._id !== withdrawalId));
-    setPendingWithdrawalCount((prev) => Math.max(prev - 1, 0));
-    setProcessingWithdrawalId(null);
+    try {
+      const res = await fetch(`/api/admin/withdrawals/${withdrawalId}/approve`, { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        setPendingWithdrawals((prev) => prev.filter(w => w._id !== withdrawalId));
+        setPendingWithdrawalCount((prev) => Math.max(prev - 1, 0));
+      } else {
+        console.error("Approval failed:", data.error);
+        // Could add toast notification here
+      }
+    } catch (error) {
+      console.error("Approval error:", error);
+    } finally {
+      setProcessingWithdrawalId(null);
+    }
   };
 
   // Decline handler
   const handleDecline = async (withdrawalId) => {
     setProcessingWithdrawalId(withdrawalId);
-    await fetch(`/api/admin/withdrawals/${withdrawalId}/reject`, { method: "POST" });
-    setPendingWithdrawals((prev) => prev.filter(w => w._id !== withdrawalId));
-    setPendingWithdrawalCount((prev) => Math.max(prev - 1, 0));
-    setProcessingWithdrawalId(null);
+    try {
+      const res = await fetch(`/api/admin/withdrawals/${withdrawalId}/reject`, { method: "POST" });
+      const data = await res.json();
+      if (data.success) {
+        setPendingWithdrawals((prev) => prev.filter(w => w._id !== withdrawalId));
+        setPendingWithdrawalCount((prev) => Math.max(prev - 1, 0));
+      } else {
+        console.error("Rejection failed:", data.error);
+      }
+    } catch (error) {
+      console.error("Rejection error:", error);
+    } finally {
+      setProcessingWithdrawalId(null);
+    }
   };
 
   return (
