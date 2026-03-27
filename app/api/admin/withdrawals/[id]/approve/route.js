@@ -6,7 +6,7 @@ import Transaction from "@/models/Transaction";
 export async function POST(req, { params }) {
   try {
     await connectToDB();
-    const { id } = params;
+    const { id } = await params;
 
     // Update withdrawal status
     const withdrawal = await Withdraw.findByIdAndUpdate(
