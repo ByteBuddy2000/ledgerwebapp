@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -9,7 +9,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { ArrowLeftRight } from "lucide-react";
+import { ArrowLeftRight, RefreshCw, ChevronLeft } from "lucide-react";
 import {
   Select,
   SelectTrigger,
@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/select";
 import NavHeader from "../components/NavHeader/NavHeader";
 import { toast, Toaster } from "sonner";
+import Link from "next/link";
 
 // Coins and their supported networks
 const coins = [
@@ -76,7 +77,7 @@ export default function Page() {
       const fromPrice = data[coinGeckoIds[from]]?.usd;
       const toPrice = data[coinGeckoIds[to]]?.usd;
       if (fromPrice && toPrice) {
-        const usdValue = amount * fromPrice;
+        const usdValue = parseFloat(amount) * fromPrice;
         const toAmount = usdValue / toPrice;
         setEquivalent(toAmount.toFixed(8));
       } else {
@@ -112,24 +113,14 @@ export default function Page() {
     fetchEquivalentAmount(amount, swapFrom, val);
   };
 
-  const handleReverseSwap = () => {
-    if (!swapFrom || !swapTo) return;
-
-    const newFrom = swapTo;
-    const newFromNetwork = swapToNetwork;
-    const newTo = swapFrom;
-    const newToNetwork = swapFromNetwork;
-
-    setSwapFrom(newFrom);
-    setSwapFromNetwork(newFromNetwork);
-    setSwapTo(newTo);
-    setSwapToNetwork(newToNetwork);
-
-    if (amount) {
-      fetchEquivalentAmount(amount, newFrom, newTo);
-    } else {
-      setEquivalent("");
-    }
+  const handleSwapCoins = () => {
+    const tempFrom = swapFrom;
+    const tempFromNet = swapFromNetwork;
+    setSwapFrom(swapTo);
+    setSwapFromNetwork(swapToNetwork);
+    setSwapTo(tempFrom);
+    setSwapToNetwork(tempFromNet);
+    fetchEquivalentAmount(amount, swapTo, tempFrom);
   };
 
   async function handleSwap(e) {
@@ -155,6 +146,9 @@ export default function Page() {
       if (!res.ok) throw new Error(data.error || "Swap failed");
       setResult(data);
       toast.success("✅ Swap successful!");
+      // Reset form after success
+      setAmount("");
+      setEquivalent("");
     } catch (err) {
       setError(err.message);
       toast.error(err.message);
@@ -163,151 +157,199 @@ export default function Page() {
     }
   }
 
+  useEffect(() => {
+    if (amount && swapFrom && swapTo) {
+      fetchEquivalentAmount(amount, swapFrom, swapTo);
+    }
+  }, [swapFrom, swapTo]);
+
   const toCoins = coins.filter((coin) => coin.value !== swapFrom);
 
   return (
-    <div className="relative min-h-screen w-full">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-gray-900 to-black text-white pb-8">
       <Toaster richColors position="top-center" />
-      {/* Gradient background covers the whole page */}
-      <div className="fixed inset-0 bg-background" />
-      <div className="relative z-10 min-h-screen flex flex-col overflow-auto">
-        <NavHeader className="text-foreground" />
-        <div className="flex flex-1 items-center justify-center px-2 sm:px-0">
-          {/* Glow Effects */}
-          <div className="absolute top-10 left-1/2 transform -translate-x-1/2 w-60 h-60 sm:w-[300px] sm:h-[300px] bg-primary/20 rounded-full blur-3xl" />
-          <div className="absolute bottom-10 right-4 sm:right-20 w-36 h-36 sm:w-[200px] sm:h-[200px] bg-primary/10 rounded-full blur-2xl" />
+      <div className="max-w-2xl mx-auto py-10 px-4 sm:px-8">
+        {/* Header */}
+        <div className="mb-6 sm:mb-8">
+          <div className="rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md px-4 py-4 sm:px-6 sm:py-5 shadow-lg">
 
-          <Card className="w-full max-w-xl sm:max-w-xl bg-card border border-border backdrop-blur-xl rounded-2xl shadow-xl shadow-primary/20 z-10 px-2 py-4 sm:px-8 sm:py-8">
-            <CardHeader>
-              <CardTitle className="text-center text-foreground text-xl sm:text-2xl font-bold tracking-tight">
-                <span className="text-primary">
-                  Swap Crypto Assets
-                </span>
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <form onSubmit={handleSwap} className="space-y-6">
-                {/* Swap From/To */}
-                <div className="flex flex-col sm:flex-row gap-4 items-stretch">
-                  <div className="flex-1">
-                    <Label className="text-muted-foreground mb-1 block">From</Label>
-                    <Select value={swapFrom} onValueChange={handleSwapFrom} required>
-                      <SelectTrigger className="bg-card/50 text-foreground border border-border h-10 rounded-lg">
-                        <SelectValue placeholder="Select coin" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-black text-white border border-white/10">
-                        {coins.map((coin) => (
-                          <SelectItem key={coin.value} value={coin.value}>
-                            {coin.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
-                    <Label className="text-xs text-muted-foreground mt-2 block">Network</Label>
-                    <Select
-                      value={swapFromNetwork}
-                      onValueChange={setSwapFromNetwork}
-                      disabled={!swapFrom}
-                      required
-                    >
-                      <SelectTrigger className="bg-card/50 text-foreground border border-border mt-1 h-9 rounded-lg">
-                        <SelectValue placeholder="Select network" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-card text-foreground border border-border">
-                        {getNetworks(swapFrom).map((net) => (
-                          <SelectItem key={net} value={net}>
-                            {net}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex items-center justify-center py-2">
-                    <button
-                      type="button"
-                      onClick={handleReverseSwap}
-                      className="p-2 bg-primary text-primary-foreground rounded-full shadow-lg shadow-primary/25 hover:opacity-90 transition"
-                      aria-label="Swap direction"
-                    >
-                      <ArrowLeftRight className="w-5 h-5" />
-                    </button>
-                  </div>
-
-                  <div className="flex-1">
-                    <Label className="text-muted-foreground mb-1 block">To</Label>
-                    <Select value={swapTo} onValueChange={handleSwapTo} required>
-                      <SelectTrigger className="bg-card/50 text-foreground border border-border h-10 rounded-lg">
-                        <SelectValue placeholder="Select coin" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-black text-white border border-white/10">
-                        {toCoins.map((coin) => (
-                          <SelectItem key={coin.value} value={coin.value}>
-                            {coin.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-
-                    <Label className="text-xs text-muted-foreground mt-2 block">Network</Label>
-                    <Select
-                      value={swapToNetwork}
-                      onValueChange={setSwapToNetwork}
-                      disabled={!swapTo}
-                      required
-                    >
-                      <SelectTrigger className="bg-card/50 text-foreground border border-border mt-1 h-9 rounded-lg">
-                        <SelectValue placeholder="Select network" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-card text-foreground border border-border">
-                        {getNetworks(swapTo).map((net) => (
-                          <SelectItem key={net} value={net}>
-                            {net}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                {/* Amount */}
-                <div>
-                  <Label className="text-sm text-muted-foreground mb-1 block">
-                    Amount ({swapFrom ? coins.find(c => c.value === swapFrom)?.label : "Coin"})
-                  </Label>
-                  <Input
-                    type="number"
-                    value={amount}
-                    onChange={handleAmountChange}
-                    placeholder="Enter amount"
-                    min="0"
-                    step="any"
-                    className="bg-card/50 text-foreground border border-border h-10 rounded-lg placeholder-muted-foreground"
-                    required
-                  />
-                  <div className="w-full text-center mt-2 text-xs text-muted-foreground">
-                    {priceLoading
-                      ? "Loading..."
-                      : equivalent && swapTo
-                      ? `≈ ${equivalent} ${coins.find(c => c.value === swapTo)?.label}`
-                      : ""}
-                  </div>
-                </div>
-
-                {/* Submit */}
+            {/* Top Row */}
+            <div className="flex items-center justify-between gap-3">
+              {/* Back */}
+              <Link href="/dashboard">
                 <Button
-                  type="submit"
-                  className="w-full bg-primary text-primary-foreground font-semibold py-2 rounded-lg shadow-lg shadow-primary/25 hover:opacity-90 transition text-base disabled:opacity-50"
-                  disabled={loading}
+                  variant="ghost"
+                  className="h-10 w-10 rounded-xl p-0 text-white hover:bg-white/10"
                 >
-                  {loading ? "Swapping..." : "Swap Coin"}
+                  <ChevronLeft className="h-5 w-5" />
                 </Button>
-              </form>
-            </CardContent>
-          </Card>
+              </Link>
+
+              {/* Title */}
+              <div className="flex-1 text-center">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-white">
+                  Swap Crypto Assets
+                </h2>
+                <p className="text-xs sm:text-sm text-white/60">
+                  Exchange tokens instantly
+                </p>
+              </div>
+
+              {/* Buy CTA */}
+              <Link href="/dashboard/buy">
+                <div className="rounded-xl bg-gradient-to-r from-blue-600 to-violet-600 px-4 py-2 text-sm font-semibold text-white shadow-md hover:scale-105 transition-transform">
+                  Buy
+                </div>
+              </Link>
+            </div>
+          </div>
         </div>
+
+        {/* Swap Form Card */}
+        <Card className="bg-slate-900 border border-slate-800 shadow-xl rounded-2xl">
+          <CardHeader>
+            <CardTitle className="text-blue-400 text-lg">Instantly Exchange Your Cryptocurrencies</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSwap} className="space-y-6">
+              {/* Swap From */}
+              <div className="space-y-2">
+                <Label className="font-medium text-blue-300 text-lg">From</Label>
+                <Select value={swapFrom} onValueChange={handleSwapFrom} required>
+                  <SelectTrigger className="bg-slate-800 text-white border border-slate-700 rounded-lg h-12 hover:bg-slate-700 transition-colors">
+                    <SelectValue placeholder="Select coin" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 text-white border border-slate-700">
+                    {coins.map((coin) => (
+                      <SelectItem key={coin.value} value={coin.value} className="hover:bg-slate-700">
+                        {coin.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={swapFromNetwork}
+                  onValueChange={setSwapFromNetwork}
+                  disabled={!swapFrom}
+                  required
+                >
+                  <SelectTrigger className="bg-slate-800 text-white border border-slate-700 rounded-lg h-10 hover:bg-slate-700 transition-colors">
+                    <SelectValue placeholder="Select network" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 text-white border border-slate-700">
+                    {getNetworks(swapFrom).map((net) => (
+                      <SelectItem key={net} value={net} className="hover:bg-slate-700">
+                        {net}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Swap Icon */}
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleSwapCoins}
+                  className="p-3 bg-gradient-to-r from-blue-600 to-violet-600 rounded-full shadow-lg hover:from-blue-700 hover:to-violet-700 transition-all duration-300 transform hover:scale-110"
+                  disabled={!swapFrom || !swapTo}
+                >
+                  <ArrowLeftRight className="w-6 h-6 text-white" />
+                </button>
+              </div>
+
+              {/* Swap To */}
+              <div className="space-y-2">
+                <Label className="font-medium text-blue-300 text-lg">To</Label>
+                <Select value={swapTo} onValueChange={handleSwapTo} required>
+                  <SelectTrigger className="bg-slate-800 text-white border border-slate-700 rounded-lg h-12 hover:bg-slate-700 transition-colors">
+                    <SelectValue placeholder="Select coin" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 text-white border border-slate-700">
+                    {toCoins.map((coin) => (
+                      <SelectItem key={coin.value} value={coin.value} className="hover:bg-slate-700">
+                        {coin.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+
+                <Select
+                  value={swapToNetwork}
+                  onValueChange={setSwapToNetwork}
+                  disabled={!swapTo}
+                  required
+                >
+                  <SelectTrigger className="bg-slate-800 text-white border border-slate-700 rounded-lg h-10 hover:bg-slate-700 transition-colors">
+                    <SelectValue placeholder="Select network" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-gray-800 text-white border border-slate-700">
+                    {getNetworks(swapTo).map((net) => (
+                      <SelectItem key={net} value={net} className="hover:bg-slate-700">
+                        {net}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Amount */}
+              <div className="space-y-2">
+                <Label className="font-medium text-blue-300 text-lg">
+                  Amount ({swapFrom ? coins.find(c => c.value === swapFrom)?.label : "Coin"})
+                </Label>
+                <Input
+                  type="number"
+                  value={amount}
+                  onChange={handleAmountChange}
+                  placeholder="Enter amount"
+                  min="0"
+                  step="any"
+                  className="bg-slate-800 text-white border border-slate-700 rounded-lg h-12 placeholder-gray-400 focus:border-blue-400 transition-colors"
+                  required
+                />
+                <div className="text-center text-sm text-gray-300">
+                  {priceLoading ? (
+                    <RefreshCw className="w-4 h-4 animate-spin mx-auto" />
+                  ) : equivalent && swapTo ? (
+                    `≈ ${equivalent} ${coins.find(c => c.value === swapTo)?.label}`
+                  ) : (
+                    ""
+                  )}
+                </div>
+              </div>
+
+              {/* Submit */}
+              <Button
+                type="submit"
+                className="w-full bg-gradient-to-r from-blue-600 to-violet-600 hover:from-blue-700 hover:to-violet-700 text-white font-semibold py-3 rounded-lg shadow transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={loading || !swapFrom || !swapTo || !amount}
+              >
+                {loading ? (
+                  <div className="flex items-center justify-center">
+                    <RefreshCw className="w-5 h-5 animate-spin mr-2" />
+                    Swapping...
+                  </div>
+                ) : (
+                  "Swap Now"
+                )}
+              </Button>
+            </form>
+
+            {result && (
+              <div className="mt-6 p-4 bg-green-500/20 border border-green-500/30 rounded-xl">
+                <h3 className="text-green-300 font-semibold mb-2">Swap Successful!</h3>
+                <p className="text-gray-300 text-sm">
+                  Swapped {result.swapped.toFixed(8)} {result.to.coin} on {result.to.network}
+                </p>
+                <p className="text-gray-300 text-sm">
+                  Remaining {result.from.coin}: {result.from.amount.toFixed(8)}
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
